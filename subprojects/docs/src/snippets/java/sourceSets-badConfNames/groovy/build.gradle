@@ -3,9 +3,9 @@ plugins {
 }
 
 configurations {
-    customCompileClasspath
+    myCodeCompileClasspath
 }
 
 sourceSets {
-    custom
+    myCode
 }

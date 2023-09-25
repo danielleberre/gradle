@@ -413,7 +413,7 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
 
             String msgExpectation = String.format("Yet Gradle expected to create it with the usage(s):\n" +
                 "%s\n" +
-                "Gradle will mutate the usage of this configuration to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names", expectedUsageDesc);
+                "Gradle will mutate the usage of configuration %s to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names", expectedUsageDesc, name);
             String basicNameAdvice = String.format("Do not create a configuration with the name %s.", name);
             String sourceSetAdvice = "Create sourceSets prior to creating or accessing the configurations associated with them.";
 
