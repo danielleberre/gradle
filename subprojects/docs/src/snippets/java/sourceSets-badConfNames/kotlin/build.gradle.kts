@@ -3,9 +3,9 @@ plugins {
 }
 
 configurations {
-    val customCompileClasspath: Configuration by creating
+    val myCodeCompileClasspath: Configuration by creating
 }
 
 sourceSets {
-    val custom: SourceSet by creating
+    val myCode: SourceSet by creating
 }
