@@ -393,11 +393,22 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
         }
     }
 
-    private void validateExistingUsageIsConsistent(String name, ConfigurationRole role) {
-        DefaultConfiguration conf = (DefaultConfiguration) getByName(name);
-        if (!role.isUsageConsistentWithRole(conf)) {
+    /**
+     * Validates and ensures that the allowed usage of an existing configuration is consistent with the given expected usage.
+     *
+     * This method will emit a detailed deprecation method with suggestions if the usage is inconsistent.  It will then attempt to mutate
+     * the usage to match the expectation.  If the usage cannot be mutated, it will throw an exception.
+     *
+     * Does <strong>NOT</strong> check anything to do with deprecated usage.
+     *
+     * @param confName the name of the configuration
+     * @param expectedUsage the expectedUsage defining the usage the configuration should allow
+     */
+    private void validateExistingUsageIsConsistent(String confName, ConfigurationRole expectedUsage) {
+        DefaultConfiguration conf = (DefaultConfiguration) getByName(confName);
+        if (!expectedUsage.isUsageConsistentWithRole(conf)) {
             String currentUsageDesc = UsageDescriber.describeCurrentUsage(conf);
-            String expectedUsageDesc = UsageDescriber.describeRole(role);
+            String expectedUsageDesc = UsageDescriber.describeRole(expectedUsage);
 
             boolean hasContext = getMaybeCreateContext().isPresent();
             boolean hasSourceSetContext = hasContext && getMaybeCreateContext().get().contains("sourceSet");
@@ -405,16 +416,16 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
             String msgDiscovery;
             if (hasContext) {
                 msgDiscovery = String.format("When creating configurations during %s, Gradle found that configuration %s already exists with permitted usage(s):\n" +
-                    "%s\n", getMaybeCreateContext().get(), name, currentUsageDesc);
+                    "%s\n", getMaybeCreateContext().get(), confName, currentUsageDesc);
             } else {
                 msgDiscovery = String.format("Configuration %s already exists with permitted usage(s):\n" +
-                    "%s\n", name, currentUsageDesc);
+                    "%s\n", confName, currentUsageDesc);
             }
 
             String msgExpectation = String.format("Yet Gradle expected to create it with the usage(s):\n" +
                 "%s\n" +
-                "Gradle will mutate the usage of configuration %s to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names", expectedUsageDesc, name);
-            String basicNameAdvice = String.format("Do not create a configuration with the name %s.", name);
+                "Gradle will mutate the usage of configuration %s to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names", expectedUsageDesc, confName);
+            String basicNameAdvice = String.format("Do not create a configuration with the name %s.", confName);
             String sourceSetAdvice = "Create sourceSets prior to creating or accessing the configurations associated with them.";
 
             DeprecationMessageBuilder<?> builder = DeprecationLogger.deprecate(msgDiscovery + msgExpectation);
@@ -431,13 +442,13 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
             }
 
             if (conf.usageCanBeMutated()) {
-                setAllowedUsageFromRole(conf, role);
+                setAllowedUsageFromRole(conf, expectedUsage);
             } else {
                 List<String> resolutions = Lists.newArrayList(basicNameAdvice);
                 if (hasSourceSetContext) {
                     resolutions.add(sourceSetAdvice);
                 }
-                throw new UnmodifiableConfigurationException(name, resolutions);
+                throw new UnmodifiableConfigurationException(confName, resolutions);
             }
         }
     }
@@ -463,6 +474,9 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
         }
     }
 
+    /**
+     * An exception to be thrown when Gradle cannot mutate the usage of a configuration.
+     */
     public static class UnmodifiableConfigurationException extends GradleException implements ResolutionProvider {
         private final List<String> resolutions;
 
