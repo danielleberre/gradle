@@ -570,16 +570,23 @@ class ConfigurationRoleUsageIntegrationTest extends AbstractIntegrationSpec impl
                 noAttributes project(":producer")
             }
 
-            task resolve {
-                inputs.files(configurations.noAttributes)
-                doLast {
+            abstract class ResolveTask extends DefaultTask {
+                @InputFiles
+                abstract ConfigurableFileCollection getMyInputs()
+
+                @TaskAction
+                void doTask() {
                     /**
                      * If additionalRuntimeClasspath in producer is consumable, it will
                      * be selected instead of runtimeElements.  This ensures it does not
                      * remain consumable after the sourceset is created.
                      */
-                    assert configurations.noAttributes.files*.name == ['producer.jar']
+                    assert myInputs*.name == ['producer.jar']
                 }
+            }
+
+            tasks.register("resolve", ResolveTask) {
+                myInputs.from(configurations.noAttributes)
             }
         """
 
