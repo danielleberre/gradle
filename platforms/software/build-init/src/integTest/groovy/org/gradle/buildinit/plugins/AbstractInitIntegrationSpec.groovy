@@ -87,6 +87,10 @@ abstract class AbstractInitIntegrationSpec extends AbstractIntegrationSpec {
         targetDir.file("gradle.properties").assertIsFile()
     }
 
+    protected void versionsCatalogGenerated() {
+        targetDir.file("gradle/libs.versions.toml").assertIsFile()
+    }
+
     protected ScriptDslFixture dslFixtureFor(BuildInitDsl dsl) {
         ScriptDslFixture.of(dsl, targetDir, subprojectName())
     }

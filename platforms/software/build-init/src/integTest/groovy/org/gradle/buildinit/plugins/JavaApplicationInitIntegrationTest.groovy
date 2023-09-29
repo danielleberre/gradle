@@ -274,4 +274,21 @@ class JavaApplicationInitIntegrationTest extends AbstractJvmLibraryInitIntegrati
         expect:
         succeeds('init', '--type', 'java-application', '--dsl', 'groovy')
     }
+
+    def "creates with gradle/libs.versions.toml when using #scriptDsl build scripts"() {
+        when:
+        run ('init', '--type', 'java-application', '--dsl', scriptDsl.id)
+
+        then:
+        versionsCatalogGenerated()
+
+        when:
+        succeeds('test')
+
+        then:
+        assertTestPassed("some.thing.AppTest", "appHasAGreeting")
+
+        where:
+        scriptDsl << ScriptDslFixture.SCRIPT_DSLS
+    }
 }
