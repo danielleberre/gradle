@@ -654,8 +654,9 @@ public class BuildScopeServices extends DefaultServiceRegistry {
         return new DefaultCompileOperationFactory(documentationRegistry);
     }
 
-    protected DefaultScriptCompilationHandler createScriptCompilationHandler(Deleter deleter, ImportsReader importsReader, ObjectFactory objectFactory) {
-        return objectFactory.newInstance(DefaultScriptCompilationHandler.class, deleter, importsReader);
+    protected DefaultScriptCompilationHandler createScriptCompilationHandler(Deleter deleter, ImportsReader importsReader, InstantiatorFactory instantiatorFactory) {
+        return instantiatorFactory.inject(this).newInstance(DefaultScriptCompilationHandler.class, deleter, importsReader);
+//        return objectFactory.newInstance(DefaultScriptCompilationHandler.class, deleter, importsReader);
     }
 
     protected ScriptRunnerFactory createScriptRunnerFactory(ListenerManager listenerManager, InstantiatorFactory instantiatorFactory) {

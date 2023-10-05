@@ -26,14 +26,17 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import org.gradle.api.problems.DocLink;
+import org.gradle.api.problems.Problem;
 import org.gradle.api.problems.locations.FileLocation;
 import org.gradle.api.problems.locations.PluginIdLocation;
 import org.gradle.api.problems.ReportableProblem;
 import org.gradle.api.problems.internal.DefaultReportableProblem;
 import org.gradle.api.problems.internal.InternalProblems;
+import org.gradle.api.problems.locations.ProblemLocation;
 import org.gradle.api.problems.locations.TaskPathLocation;
 import org.gradle.internal.reflect.validation.TypeValidationProblemRenderer;
 import org.gradle.util.Path;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,9 +62,10 @@ public class ValidationProblemSerialization {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
         gsonBuilder.registerTypeHierarchyAdapter(DocLink.class, new DocLinkAdapter());
-        gsonBuilder.registerTypeHierarchyAdapter(FileLocation.class, new FileLocationAdapter());
-        gsonBuilder.registerTypeHierarchyAdapter(PluginIdLocation.class, new PluginIdLocationAdapter());
-        gsonBuilder.registerTypeHierarchyAdapter(TaskPathLocation.class, new TaskLocationAdapter());
+        gsonBuilder.registerTypeHierarchyAdapter(ProblemLocation.class, new LocationAdapter());
+//        gsonBuilder.registerTypeHierarchyAdapter(FileLocation.class, new FileLocationAdapter());
+//        gsonBuilder.registerTypeHierarchyAdapter(PluginIdLocation.class, new PluginIdLocationAdapter());
+//        gsonBuilder.registerTypeHierarchyAdapter(TaskPathLocation.class, new TaskLocationAdapter());
         gsonBuilder.registerTypeAdapterFactory(new ThrowableAdapterFactory());
 
         return gsonBuilder;
@@ -216,6 +220,15 @@ public class ValidationProblemSerialization {
         @Override
         public FileLocation read(JsonReader in) throws IOException {
             in.beginObject();
+            FileLocation fileLocation = readObject(in);
+            in.endObject();
+
+            Objects.requireNonNull(fileLocation, "path must not be null");
+            return fileLocation;
+        }
+
+        @NotNull
+        private static FileLocation readObject(JsonReader in) throws IOException {
             String path = null;
             Integer line = null;
             Integer column = null;
@@ -243,9 +256,6 @@ public class ValidationProblemSerialization {
                         in.skipValue();
                 }
             }
-            in.endObject();
-
-            Objects.requireNonNull(path, "path must not be null");
             return new FileLocation(path, line, column, length);
         }
     }
@@ -268,6 +278,14 @@ public class ValidationProblemSerialization {
         @Override
         public PluginIdLocation read(JsonReader in) throws IOException {
             in.beginObject();
+            PluginIdLocation problemLocation = readObject(in);
+            in.endObject();
+
+            Objects.requireNonNull(problemLocation, "pluginId must not be null");
+            return problemLocation;
+        }
+
+        private static PluginIdLocation readObject(JsonReader in) throws IOException {
             String pluginId = null;
             while (in.hasNext()) {
                 String name = in.nextName();
@@ -277,9 +295,6 @@ public class ValidationProblemSerialization {
                     in.skipValue();
                 }
             }
-            in.endObject();
-
-            Objects.requireNonNull(pluginId, "pluginId must not be null");
             return new PluginIdLocation(pluginId);
         }
     }
@@ -302,6 +317,15 @@ public class ValidationProblemSerialization {
         @Override
         public TaskPathLocation read(JsonReader in) throws IOException {
             in.beginObject();
+            TaskPathLocation identityPath = readObject(in);
+            in.endObject();
+
+            Objects.requireNonNull(identityPath, "identityPath must not be null");
+            return identityPath;
+        }
+
+        @NotNull
+        private static TaskPathLocation readObject(JsonReader in) throws IOException {
             String identityPath = null;
             while (in.hasNext()) {
                 String name = in.nextName();
@@ -311,9 +335,6 @@ public class ValidationProblemSerialization {
                     in.skipValue();
                 }
             }
-            in.endObject();
-
-            Objects.requireNonNull(identityPath, "identityPath must not be null");
             return new TaskPathLocation(Path.path(identityPath));
         }
     }
@@ -371,4 +392,57 @@ public class ValidationProblemSerialization {
         }
     }
 
+    private static class LocationAdapter extends TypeAdapter<ProblemLocation> {
+        @Override
+        public void write(JsonWriter out, ProblemLocation value) throws IOException {
+            if (value == null) {
+                out.nullValue();
+                return;
+            }
+
+            if (value instanceof FileLocation) {
+                new FileLocationAdapter().write(out, (FileLocation) value);
+                return;
+            }
+            if (value instanceof PluginIdLocation) {
+                new PluginIdLocationAdapter().write(out, (PluginIdLocation) value);
+                return;
+            }
+            if (value instanceof TaskPathLocation) {
+                new TaskLocationAdapter().write(out, (TaskPathLocation) value);
+            }
+        }
+
+        @Override
+        public ProblemLocation read(JsonReader in) throws IOException {
+            if (in.hasNext()) {
+                in.beginObject();
+                try {
+                    String type = null;
+                    String name = in.nextName();
+                    if (name.equals("type")) {
+                        type = in.nextString();
+                    }
+                    if (type == null) {
+                        throw new JsonParseException("type must not be null");
+                    }
+
+                    switch (type) {
+                        case "file":
+                            return FileLocationAdapter.readObject(in);
+                        case "pluginId":
+                            return PluginIdLocationAdapter.readObject(in);
+                        case "task":
+                            return TaskLocationAdapter.readObject(in);
+                        default:
+                            throw new JsonParseException("Unknown type: " + type);
+                    }
+
+                } finally {
+                    in.endObject();
+                }
+            }
+            return null;
+        }
+    }
 }

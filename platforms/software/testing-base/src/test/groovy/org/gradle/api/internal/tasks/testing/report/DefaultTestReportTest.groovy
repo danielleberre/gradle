@@ -51,7 +51,7 @@ class DefaultTestReportTest extends Specification {
         def parallelismConfiguration = new DefaultParallelismConfiguration(false, numThreads)
         buildOperationExecutor = new DefaultBuildOperationExecutor(
                 Mock(BuildOperationListener), Mock(Clock), new NoOpProgressLoggerFactory(),
-                new DefaultBuildOperationQueueFactory(workerLeaseService), new DefaultExecutorFactory(), parallelismConfiguration, new DefaultBuildOperationIdFactory(), new DefaultProblems(Mock(BuildOperationProgressEventEmitter)))
+                new DefaultBuildOperationQueueFactory(workerLeaseService), new DefaultExecutorFactory(), parallelismConfiguration, new DefaultBuildOperationIdFactory())
         return new DefaultTestReport(buildOperationExecutor)
     }
 
