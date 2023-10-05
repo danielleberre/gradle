@@ -9,7 +9,6 @@ Include only their name, impactful features should be called out separately belo
  THiS LIST SHOULD BE ALPHABETIZED BY [PERSON NAME] - the docs:updateContributorsInReleaseNotes task will enforce this ordering, which is case-insensitive.
 -->
 We would like to thank the following community members for their contributions to this release of Gradle:
-[Philipp Schneider](https://github.com/p-schneider),
 
 ## Upgrade instructions
 
@@ -51,60 +50,6 @@ Example:
 ADD RELEASE FEATURES BELOW
 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv -->
 
-<a name="ear-plugin"></a>
-### Ear Plugin
-
-The Ear plugin, which generates Java EE Enterprise Archive (EAR) files, now supports valid deployment descriptors for Java EE 8, Jakarta EE 9, and Jakarta EE 10.
-You can specify the corresponding version in the `deploymentDescriptor` instead of having to use a [custom descriptor file](userguide/ear_plugin.html#sec:using_custom_app_xml):
-
-```kotlin
-tasks.ear {
-    deploymentDescriptor {  // custom entries for application.xml:
-        version = "10" // Now supporting version 8, 9, and 10
-    }
-}
-```
-
-<a name="wrapper-improvements"></a>
-### Wrapper Improvements
-
-The recommended way to execute any Gradle build is with the help of the [Gradle Wrapper](userguide/gradle_wrapper.html) (in short, “Wrapper”).
-The Wrapper invokes a declared version of Gradle, downloading it beforehand if necessary.
-
-#### Smaller Wrapper JAR
-
-The Wrapper JAR file size was reduced from ~65K down to ~45K by eliminating unused code.
-
-#### Wrapper JAR LICENSE File
-
-The Wrapper JAR now contains a `META-INF/LICENSE` file.
-
-This was done to alleviate any doubts regarding licensing of the Wrapper JAR file.
-The Wrapper and the Gradle Build Tool are licensed under the [Apache Software License 2.0](https://github.com/gradle/gradle/blob/master/LICENSE).
-The JAR file is now self-attributing so that you don't need to add a separate `LICENSE` file in your codebase.
-
-
-<a name="kotlin-dsl"></a>
-### Kotlin DSL improvements
-
-Gradle's [Kotlin DSL](userguide/kotlin_dsl.html) provides an enhanced editing experience in supported IDEs compared to the traditional Groovy DSL — auto-completion, smart content assist, quick access to documentation, navigation to source, and context-aware refactoring.
-
-#### Version catalog API in precompiled scripts
-
-The `versionCatalogs` extension accessor is now available in Kotlin DSL precompiled scripts.
-
-It provides a [type unsafe API](userguide/platforms.html#sub:type-unsafe-access-to-catalog) for accessing version catalogs available on the projects where the precompiled script will be applied:
-
-```kotlin
-// buildSrc/src/main/kotlin/my-convention-plugin.gradle.kts
-versionCatalogs.named("libs").findLibrary("assertj-core").ifPresent { assertjCore ->
-    dependencies {
-        testImplementation(assertjCore)
-    }
-}
-```
-
-Check the [version catalog API](javadoc/org/gradle/api/artifacts/VersionCatalog.html) for all supported methods.
 
 
 <!-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
