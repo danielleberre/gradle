@@ -152,8 +152,7 @@ public interface RoleBasedConfigurationContainerInternal extends ConfigurationCo
      * Intended only for use with roles defined in {@link ConfigurationRolesForMigration}.
      *
      * If a configuration with this name already exists this method will <strong>overwrite</strong> its current usage to match what
-     * would be set if the configuration needed to be created and emit an additional deprecation warning when doing this
-     * <strong>IFF</strong> {@code warnOnDuplicate} is set to {@code true}.
+     * would be set if the configuration needed to be created and emit an additional deprecation warning.
      *
      * @throws org.gradle.api.InvalidUserDataException If a non-migration role is used.
      */
@@ -164,8 +163,7 @@ public interface RoleBasedConfigurationContainerInternal extends ConfigurationCo
      * Otherwise, creates a new resolvable + dependency scope configuration with the given name.
      *
      * If a configuration with this name already exists this method will <strong>overwrite</strong> its current usage to match what
-     * would be set if the configuration needed to be created and emit an additional deprecation warning when doing this
-     * <strong>IFF</strong> {@code warnOnDuplicate} is set to {@code true}.
+     * would be set if the configuration needed to be created and emit an additional deprecation warning.
      *
      * @deprecated Whether concept of a resolvable + dependency scope configuration should exist
      * is still under debate. However, in general, we should try to split up configurations which
