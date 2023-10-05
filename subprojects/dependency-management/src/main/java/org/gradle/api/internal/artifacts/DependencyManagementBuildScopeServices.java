@@ -467,9 +467,10 @@ class DependencyManagementBuildScopeServices {
         FileCollectionFactory fileCollectionFactory,
         ImmutableAttributesFactory attributesFactory,
         CapabilityNotationParser capabilityNotationParser,
-        InputFingerprinter inputFingerprinter
+        InputFingerprinter inputFingerprinter,
+        Problems problemsService
     ) {
-        return objectFactory.newInstance(DefaultDependenciesAccessors.class, registry, workspace, factory, featureFlags, executionEngine, fileCollectionFactory, inputFingerprinter, attributesFactory, capabilityNotationParser);
+        return new DefaultDependenciesAccessors(registry, workspace, factory, featureFlags, executionEngine, fileCollectionFactory, inputFingerprinter, attributesFactory, capabilityNotationParser, problemsService);
     }
 
 

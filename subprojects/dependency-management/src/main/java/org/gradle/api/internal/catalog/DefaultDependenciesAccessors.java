@@ -103,6 +103,7 @@ public class DefaultDependenciesAccessors implements DependenciesAccessors {
     private final InputFingerprinter inputFingerprinter;
     private final ImmutableAttributesFactory attributesFactory;
     private final CapabilityNotationParser capabilityNotationParser;
+    private final Problems problemsService;
 
     private final List<DefaultVersionCatalog> models = Lists.newArrayList();
     private final Map<String, Class<? extends ExternalModuleDependencyFactory>> factories = Maps.newHashMap();
@@ -122,7 +123,8 @@ public class DefaultDependenciesAccessors implements DependenciesAccessors {
         FileCollectionFactory fileCollectionFactory,
         InputFingerprinter inputFingerprinter,
         ImmutableAttributesFactory attributesFactory,
-        CapabilityNotationParser capabilityNotationParser
+        CapabilityNotationParser capabilityNotationParser,
+        Problems problemsService
     ) {
         this.classPath = registry.getClassPath("DEPENDENCIES-EXTENSION-COMPILER");
         this.workspace = workspace;
@@ -133,11 +135,12 @@ public class DefaultDependenciesAccessors implements DependenciesAccessors {
         this.inputFingerprinter = inputFingerprinter;
         this.attributesFactory = attributesFactory;
         this.capabilityNotationParser = capabilityNotationParser;
+        this.problemsService = problemsService;
     }
 
     @Inject
     protected Problems getProblemService() {
-        throw new UnsupportedOperationException("not implemented");
+        return problemsService;
     }
 
     @Override
