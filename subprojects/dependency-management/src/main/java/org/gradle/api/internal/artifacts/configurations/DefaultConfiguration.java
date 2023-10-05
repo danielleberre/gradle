@@ -1857,7 +1857,8 @@ since users cannot create non-legacy configurations and there is no current publ
         setCanBeConsumed(allowed, true);
     }
 
-    /* package */ void setCanBeConsumed(boolean allowed, boolean warn) {
+    @Override
+    public void setCanBeConsumed(boolean allowed, boolean warn) {
         if (canBeConsumed != allowed) {
             validateMutation(MutationType.USAGE);
             canBeConsumed = allowed;
@@ -1879,7 +1880,8 @@ since users cannot create non-legacy configurations and there is no current publ
         setCanBeResolved(allowed, true);
     }
 
-    /* package */ void setCanBeResolved(boolean allowed, boolean warn) {
+    @Override
+    public void setCanBeResolved(boolean allowed, boolean warn) {
         if (canBeResolved != allowed) {
             validateMutation(MutationType.USAGE);
             canBeResolved = allowed;
@@ -1901,7 +1903,8 @@ since users cannot create non-legacy configurations and there is no current publ
         setCanBeDeclared(allowed, true);
     }
 
-    /* package */ void setCanBeDeclared(boolean allowed, boolean warn) {
+    @Override
+    public void setCanBeDeclared(boolean allowed, boolean warn) {
         if (canBeDeclaredAgainst != allowed) {
             validateMutation(MutationType.USAGE);
             canBeDeclaredAgainst = allowed;
