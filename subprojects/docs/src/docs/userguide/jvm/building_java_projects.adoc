@@ -139,7 +139,7 @@ include::sample[dir="snippets/java/sourceSets-badConfNames/kotlin",files="build.
 include::sample[dir="snippets/java/sourceSets-badConfNames/groovy",files="build.gradle[tags=java-dependency-mgmt]"]
 ====
 
-This situation will be announced with the following deprecation warning:
+In this case, the following deprecation warning is emitted:
 
 ```
 When creating configurations during sourceSet custom setup, Gradle found that configuration customCompileClasspath already exists with permitted usage(s):
