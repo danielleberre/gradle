@@ -128,10 +128,8 @@ You'll learn more about source sets and the features they provide in:
 When a source set is created, it also creates a number of configurations as described above.
 Build logic should **not** attempt to create or access these configurations until they are first created by the source set.
 
-Gradle expects these associated configurations to allow only certain types of usage and will ideally create them with the proper usage.
-
-When Gradle detects that configurations with these implicitly "reserved" names already exist, it will warn about this situation with a deprecation message.
-Gradle will then attempt to mutate the allowed usage to match the expected usage.
+When creating a source set, if one of these automatically created configurations already exists, Gradle will emit a deprecation warning. 
+If the existing configuration's role is different than the role that the source set would have assigned, its role will be mutated to the correct value and another deprecation warning will be emitted. 
 
 The build below demonstrates this unwanted behavior.
 
