@@ -462,7 +462,7 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
      * @param conf the configuration to update (should be {@code usageCanBeMutated() == true})
      * @param role the role specifying the usage the conf should possess
      */
-    private void setAllowedUsageFromRole(DefaultConfiguration conf, ConfigurationRole role) {
+    private void setAllowedUsageFromRole(ConfigurationInternal conf, ConfigurationRole role) {
         if (conf.isCanBeConsumed() != role.isConsumable()) {
             conf.setCanBeConsumed(role.isConsumable(), false);
         }
