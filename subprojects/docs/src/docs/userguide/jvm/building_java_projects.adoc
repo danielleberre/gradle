@@ -125,8 +125,8 @@ You'll learn more about source sets and the features they provide in:
 [[sec:implicit_sourceset_configurations]]
 === Source set configurations
 
-Every source set that exists will cause Gradle to create several associated configurations as described above.
-These configurations should **not** be created or accessed before Gradle does this.
+When a source set is created, it also creates a number of configurations as described above.
+Build logic should **not** attempt to create or access these configurations until they are first created by the source set.
 
 Gradle expects these associated configurations to allow only certain types of usage and will ideally create them with the proper usage.
 
