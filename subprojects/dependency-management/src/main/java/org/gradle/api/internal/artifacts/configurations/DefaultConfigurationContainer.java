@@ -405,7 +405,7 @@ public class DefaultConfigurationContainer extends AbstractValidatingNamedDomain
      * @param expectedUsage the expectedUsage defining the usage the configuration should allow
      */
     private void validateExistingUsageIsConsistent(String confName, ConfigurationRole expectedUsage) {
-        DefaultConfiguration conf = (DefaultConfiguration) getByName(confName);
+        ConfigurationInternal conf = getByName(confName);
         if (!expectedUsage.isUsageConsistentWithRole(conf)) {
             String currentUsageDesc = UsageDescriber.describeCurrentUsage(conf);
             String expectedUsageDesc = UsageDescriber.describeRole(expectedUsage);
