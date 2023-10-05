@@ -540,13 +540,15 @@ class ConfigurationRoleUsageIntegrationTest extends AbstractIntegrationSpec impl
         file("buildSrc/src/main/resources/META-INF/gradle-plugins/my-plugin.properties") << "implementation-class=MyPlugin"
 
         buildFile << """
-            apply plugin: 'my-plugin'
-            apply plugin: 'java'
+            plugins {
+                id 'my-plugin'
+                id 'java'
+            }
         """
 
         expect:
         executer.expectDocumentedDeprecationWarning("The configuration customCompileOnly was created explicitly. This configuration name is reserved for creation by Gradle. This behavior has been deprecated. This behavior is scheduled to be removed in Gradle 9.0. Do not create a configuration with the name customCompileOnly. Consult the upgrading guide for further information: https://docs.gradle.org/current/userguide/upgrading_version_8.html#configurations_allowed_usage")
-        executer.expectDocumentedDeprecationWarning("Gradle will mutate the usage of configuration customCompileOnly to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names has been deprecated. This will fail with an error in Gradle 9.0. Create sourceSets prior to creating or accessing the configurations associated with them. For more information, please refer to https://docs.gradle.org/current/userguide/building_java_projects.html#sec:implicit_sourceset_configurations in the Gradle documentation.")
+        executer.expectDocumentedDeprecationWarning("Gradle will mutate the usage of configuration customCompileOnly to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names has been deprecated. This will fail with an error in Gradle 9.0. Do not create a configuration with the name customCompileOnly. For more information, please refer to https://docs.gradle.org/current/userguide/building_java_projects.html#sec:implicit_sourceset_configurations in the Gradle documentation.")
         executer.expectDocumentedDeprecationWarning("The configuration implementation was created explicitly. This configuration name is reserved for creation by Gradle. This behavior has been deprecated. This behavior is scheduled to be removed in Gradle 9.0. Do not create a configuration with the name implementation. Consult the upgrading guide for further information: https://docs.gradle.org/current/userguide/upgrading_version_8.html#configurations_allowed_usage")
         executer.expectDocumentedDeprecationWarning("Gradle will mutate the usage of configuration implementation to match the expected usage. This may cause unexpected behavior. Creating configurations with reserved names has been deprecated. This will fail with an error in Gradle 9.0. Create sourceSets prior to creating or accessing the configurations associated with them. For more information, please refer to https://docs.gradle.org/current/userguide/building_java_projects.html#sec:implicit_sourceset_configurations in the Gradle documentation.")
         succeeds 'help'
@@ -560,7 +562,9 @@ class ConfigurationRoleUsageIntegrationTest extends AbstractIntegrationSpec impl
         """
 
         file("resolver/build.gradle") << """
-            apply plugin: 'java-base'
+            plugins {
+                id 'java-base'
+            }
 
             configurations {
                 noAttributes
@@ -591,7 +595,9 @@ class ConfigurationRoleUsageIntegrationTest extends AbstractIntegrationSpec impl
         """
 
         file("producer/build.gradle") << """
-            apply plugin: 'java'
+            plugins {
+                id 'java'
+            }
 
             ${confCreationCode}
 
